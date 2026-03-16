@@ -487,11 +487,11 @@ Please also cite the following tools used by this pipeline:
 
 ## Funding and Acknowledgements
 
-This work was developed by Randi Foxall in the Whistler Lab at the University of New Hampshire under the supervision of Dr. Cheryl Whistler.
+This work was developed by Randi Foxall in the Whistler Lab at the University of New Hampshire under the supervision of Dr. Cheryl Whistler and Dr. Stephen Jones.
 
 This work was supported by the New Hampshire Agricultural Experiment Station through the NHAES CREATE (Collaborative Research Enhancement and Team Exploration) program, which is part of the New Hampshire Agricultural Experiment Station at the University of New Hampshire.
 
-We thank Dr. Cheryl Whistler (UNH, New Hampshire Agricultural Experiment Station) and Dr. Stephen Jones (UNH, Natural Resources and the Environment) for their support and funding contributions to this work.
+Thanks to Dr. Cheryl Whistler (UNH, Molecular Cellular and Biomedical Sciences), Dr. Stephen Jones (UNH, Natural Resources and the Environment), and Dr. Ashley Busco (UNH, Biological Sciences) for their support and funding contributions to this work.
 
 ---
 
@@ -501,7 +501,8 @@ We thank Dr. Cheryl Whistler (UNH, New Hampshire Agricultural Experiment Station
 |------|------|-------------|
 | Randi Foxall | Developer | Whistler Lab, University of New Hampshire |
 | Cheryl Whistler | Principal Investigator & Funder | Molecular Cellular and Biomedical Sciences, University of New Hampshire |
-| Stephen Jones | Funder & Co-Investigator | Department of Natural Resources and the Environment, University of New Hampshire |
+| Stephen Jones | Co-Investigator & Funder | Department of Natural Resources and the Environment, University of New Hampshire |
+| Ashley Busco | Co-Investigator & Funder | Biological Sciences, University of New Hampshire |
 
 ---
 
