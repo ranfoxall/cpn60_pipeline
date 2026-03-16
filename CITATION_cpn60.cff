@@ -1,0 +1,145 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "cpn60_pipeline: A cpn60 universal target amplicon sequencing pipeline"
+version: 1.0.0
+date-released: 2026-03-01
+authors:
+  - family-names: Foxall
+    given-names: Randi
+    affiliation: "Whistler Lab, University of New Hampshire"
+  - family-names: Whistler
+    given-names: Cheryl
+    affiliation: "University of New Hampshire, Molecular Cellular and Biomedical Sciences"
+    orcid: ""
+  - family-names: Jones
+    given-names: Stephen
+    affiliation: "Department of Natural Resources and the Environment, University of New Hampshire"
+repository-code: "https://github.com/ranfoxall/cpn60_pipeline"
+license: CC-BY-NC-4.0
+abstract: >
+  cpn60_pipeline is an R-based pipeline for processing cpn60 universal target (UT)
+  amplicon sequencing data using DADA2. It is designed for the cpn60 UT primers
+  (H279, H280, H1612, H1613), which contain inosine bases and target a ~560 bp
+  hypervariable region of cpn60 that captures broad bacterial diversity across
+  environmental, marine, food, and host-associated communities. The pipeline handles
+  primer trimming via QIIME2/cutadapt, produces ASV tables, FASTA files, and phyloseq
+  objects, with optional taxonomy classification using the cpn60 QIIME2 classifier.
+  Developed in the Whistler Lab at the University of New Hampshire.
+keywords:
+  - cpn60
+  - cpn60 universal target
+  - hsp60
+  - amplicon sequencing
+  - DADA2
+  - microbiome
+  - QIIME2
+  - phyloseq
+  - marine microbiology
+  - environmental microbiology
+funding:
+  - "New Hampshire Agricultural Experiment Station CREATE (Collaborative
+    Research Enhancement and Team Exploration) program"
+references:
+  - type: article
+    authors:
+      - family-names: Schellenberg
+        given-names: John
+      - family-names: Links
+        given-names: Matthew G.
+      - family-names: Hill
+        given-names: Janet E.
+      - family-names: Dumonceaux
+        given-names: Tim J.
+      - family-names: Peters
+        given-names: Gregory A.
+      - family-names: Tyler
+        given-names: Shaun
+      - family-names: Kimpe
+        given-names: Simon R.
+      - family-names: Severini
+        given-names: Alberto
+      - family-names: Plummer
+        given-names: Francis A.
+    title: "Pyrosequencing of the chaperonin-60 universal target as a tool for determining microbial community composition"
+    journal: "Applied and Environmental Microbiology"
+    volume: 75
+    issue: 9
+    pages: "2889-2898"
+    year: 2009
+    doi: 10.1128/AEM.02645-08
+  - type: article
+    authors:
+      - family-names: Links
+        given-names: Matthew G.
+      - family-names: Dumonceaux
+        given-names: Tim J.
+      - family-names: Hemmingsen
+        given-names: Sig M.
+      - family-names: Hill
+        given-names: Janet E.
+    title: "The chaperonin-60 universal target is a barcode for bacteria and mitochondria"
+    journal: "PLoS ONE"
+    volume: 7
+    issue: 9
+    pages: "e49755"
+    year: 2012
+    doi: 10.1371/journal.pone.0049755
+  - type: article
+    authors:
+      - family-names: Callahan
+        given-names: Benjamin J.
+      - family-names: McMurdie
+        given-names: Paul J.
+      - family-names: Rosen
+        given-names: Michael J.
+      - family-names: Han
+        given-names: Andrew W.
+      - family-names: Johnson
+        given-names: Amy Jo A.
+      - family-names: Holmes
+        given-names: Susan P.
+    title: "DADA2: High-resolution sample inference from Illumina amplicon data"
+    journal: "Nature Methods"
+    volume: 13
+    pages: "581-583"
+    year: 2016
+    doi: 10.1038/nmeth.3869
+  - type: article
+    authors:
+      - family-names: Bolyen
+        given-names: Evan
+      - family-names: Rideout
+        given-names: Jai Ram
+      - family-names: Dillon
+        given-names: Matthew R.
+      - name: "et al."
+    title: "Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2"
+    journal: "Nature Biotechnology"
+    volume: 37
+    pages: "852-857"
+    year: 2019
+    doi: 10.1038/s41587-019-0209-9
+  - type: article
+    authors:
+      - family-names: Martin
+        given-names: Marcel
+    title: "Cutadapt removes adapter sequences from high-throughput sequencing reads"
+    journal: "EMBnet.journal"
+    volume: 17
+    issue: 1
+    pages: "10-12"
+    year: 2011
+    doi: 10.14806/ej.17.1.200
+  - type: article
+    authors:
+      - family-names: McMurdie
+        given-names: Paul J.
+      - family-names: Holmes
+        given-names: Susan
+    title: "phyloseq: An R Package for Reproducible Interactive Analysis and Graphics of Microbiome Census Data"
+    journal: "PLoS ONE"
+    volume: 8
+    issue: 4
+    pages: "e61217"
+    year: 2013
+    doi: 10.1371/journal.pone.0061217
