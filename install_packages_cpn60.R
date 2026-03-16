@@ -1,4 +1,3 @@
-# ============================================================
 # install_packages.R
 # cpn60_pipeline – R/Bioconductor Package Installation
 # R 4.5 / Bioconductor 3.22
@@ -10,7 +9,6 @@
 #   Rscript install_packages.R
 #
 # Installation order matters -- do not rearrange sections.
-# ============================================================
 
 # Helper: install only if missing
 install_if_missing <- function(pkg, bioc=FALSE, version=NULL) {
@@ -30,23 +28,21 @@ install_if_missing <- function(pkg, bioc=FALSE, version=NULL) {
   }
 }
 
-# ============================================================
 # 1. BiocManager -- pin to Bioconductor 3.22 for R 4.5
-# ============================================================
+
 if (!requireNamespace("BiocManager", quietly=TRUE))
   install.packages("BiocManager", repos="https://cran.r-project.org")
 
 BiocManager::install(version="3.22", ask=FALSE)
 
-# ============================================================
 # 2. remotes -- needed for pinned CRAN versions
-# ============================================================
+
 install_if_missing("remotes")
 library(remotes)
 
-# ============================================================
+
 # 3. Core CRAN dependencies (order matters)
-# ============================================================
+
 
 install_if_missing("Matrix")
 library(Matrix)
@@ -96,9 +92,7 @@ install_if_missing("optparse")
 library(optparse)
 message("optparse: ", packageVersion("optparse"))
 
-# ============================================================
 # 4. Bioconductor genomic packages (order matters)
-# ============================================================
 
 # Rhtslib requires xz/zlib/bzip2/curl/openssl system libs
 # If this fails with "lzma.h not found", run:
@@ -138,9 +132,8 @@ install_if_missing("ShortRead", bioc=TRUE)
 library(ShortRead)
 message("ShortRead: ", packageVersion("ShortRead"))
 
-# ============================================================
+
 # 5. Pipeline-specific packages
-# ============================================================
 
 install_if_missing("multtest", bioc=TRUE)
 library(multtest)
@@ -161,9 +154,8 @@ message("biomformat: ", packageVersion("biomformat"))
 message("vegan: ", packageVersion("vegan"))
 message("ade4: ", packageVersion("ade4"))
 
-# ============================================================
 # 6. Final check -- print all installed versions
-# ============================================================
+
 pkgs <- c("Matrix", "MASS", "mgcv", "png", "data.table", "igraph",
           "latticeExtra", "dplyr", "magrittr", "tidyr", "ggplot2",
           "optparse", "DelayedArray", "Rhtslib", "rhdf5filters",
