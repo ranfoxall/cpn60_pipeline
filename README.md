@@ -1,7 +1,7 @@
 # cpn60_pipeline README
 
 ## Overview
-This pipeline processes **cpn60 universal target (UT) amplicon sequencing data** using DADA2, producing ASVs, counts tables, FASTA files, taxonomy files, and a phyloseq object ready for downstream analysis. It is designed for the cpn60 UT primers described in Links et al. 2012 and Schellenberg et al. 2009, which target a ~560 bp hypervariable region of the cpn60 gene and capture broad bacterial diversity across environmental, food, and host-associated communities. Primer trimming uses QIIME2/cutadapt with four degenerate primers containing inosine bases (H279, H280, H1612, H1613). Taxonomy classification using the cpn60 QIIME2 classifier is run as a separate second script, allowing DADA2 and QIIME2 to run in their own conda environments. The pipeline can also merge multiple runs or plates into a single dataset.
+This pipeline processes **cpn60 universal target (UT) amplicon sequencing data** using DADA2, producing ASVs, counts tables, FASTA files, taxonomy files, and a phyloseq object ready for downstream analysis. It is designed for the cpn60 UT primers described in Links et al. 2012 and Schellenberg et al. 2009, which target a ~560 bp hypervariable region of the cpn60 gene and capture broad bacterial diversity across environmental, food, and host-associated communities. Primer trimming uses QIIME2/cutadapt with four degenerate primers containing inosine bases (H279, H280, H1612, H1613). Taxonomy classification using the cpn60 QIIME2 classifier is run as a separate second script, allowing DADA2 and QIIME2 to run in their own conda environments. The pipeline can also merge multiple runs or plates into a single dataset. There is a special section (9) for running on the Premise HPC at UNH.
 
 ---
 
