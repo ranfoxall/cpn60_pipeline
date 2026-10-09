@@ -137,41 +137,62 @@ cat(length(filtFs), "samples remain after filtering.\n")
 # 5. Error model learning
 # ----------------------
 
-# LOESS error function (defined here for use by any model option)
+# LOESS error function: DADA2's loessErrfun structure, weighted by read count,
+# smoother span, edge values extended, and error rates forced to fall (or stay
+# flat) as quality rises. Suitable for binned quality scores.
 loessErrfun_mod <- function(trans) {
   qq  <- as.numeric(colnames(trans))
-  est <- matrix(0, nrow=16, ncol=length(qq))
-  rownames(est) <- paste0(rep(c("A","C","G","T"), each=4), "2",
-                          rep(c("A","C","G","T"), 4))
-  colnames(est) <- colnames(trans)
-  for (nti in c("A","C","G","T")) {
-    for (ntj in c("A","C","G","T")) {
+  est <- matrix(0, nrow = 0, ncol = length(qq))
+  for (nti in c("A", "C", "G", "T")) {
+    for (ntj in c("A", "C", "G", "T")) {
       if (nti != ntj) {
-        errs <- trans[paste0(nti,"2",ntj),]
-        tot  <- colSums(trans[paste0(nti,"2",c("A","C","G","T")),])
-        df   <- data.frame(q=qq, rlogp=log10((errs+1)/(tot+1)))
-        mod.lo <- loess(rlogp ~ q, df, span=0.95, degree=1)
-        pred   <- predict(mod.lo, qq)
-        pred[is.na(pred)] <- 0
-        est[paste0(nti,"2",ntj),] <- 10^pred
+        errs  <- trans[paste0(nti, "2", ntj), ]
+        tot   <- colSums(trans[paste0(nti, "2", c("A", "C", "G", "T")), ])
+        rlogp <- log10((errs + 1) / tot)
+        rlogp[is.infinite(rlogp)] <- NA
+        df  <- data.frame(q = qq, errs = errs, tot = tot, rlogp = rlogp)
+        fit <- loess(rlogp ~ q, df, weights = log10(tot), span = 2)
+        pred <- predict(fit, qq)
+        hi <- max(which(!is.na(pred))); lo <- min(which(!is.na(pred)))
+        pred[seq_along(pred) > hi] <- pred[[hi]]
+        pred[seq_along(pred) < lo] <- pred[[lo]]
+        est <- rbind(est, 10^pred)
       }
     }
   }
   est[est > 0.25] <- 0.25
   est[est < 1e-7] <- 1e-7
-  return(est)
+  est <- t(apply(est, 1, cummin))
+  err <- rbind(1 - colSums(est[1:3, ]), est[1:3, ],                 # A2A A2C A2G A2T
+               est[4, ], 1 - colSums(est[4:6, ]), est[5:6, ],       # C2A C2C C2G C2T
+               est[7:8, ], 1 - colSums(est[7:9, ]), est[9, ],       # G2A G2C G2G G2T
+               est[10:12, ], 1 - colSums(est[10:12, ]))             # T2A T2C T2G T2T
+  rownames(err) <- paste0(rep(c("A", "C", "G", "T"), each = 4), "2", c("A", "C", "G", "T"))
+  colnames(err) <- colnames(trans)
+  err
 }
 
-# Model fit metric (used only for 'compare' mode)
+# Model fit metric (compare mode): squared difference between fitted and observed
+# transition rates, with observed rates normalised within each starting base
 error_fit_metric <- function(errObj) {
-  trans      <- errObj$trans
-  trans_norm <- sweep(trans, 2, colSums(trans), "/")
-  err_mat    <- errObj$err_out
-  err_mat    <- err_mat[rownames(trans_norm), colnames(trans_norm)]
-  return(sum((err_mat - trans_norm)^2))
+  trans   <- errObj$trans
+  obs     <- trans
+  for (nt in c("A", "C", "G", "T")) {
+    rows <- paste0(nt, "2", c("A", "C", "G", "T"))
+    tot  <- colSums(trans[rows, , drop = FALSE])
+    obs[rows, ] <- sweep(trans[rows, , drop = FALSE], 2, pmax(tot, 1), "/")
+  }
+  fit  <- errObj$err_out[rownames(obs), colnames(obs)]
+  used <- colSums(trans) > 0                       # only quality scores that occur
+  sum((fit[, used] - obs[, used])^2)
 }
 
-err_cache_file <- paste0(output_prefix, "_error_model.rds")
+# Cache name includes the model, so switching --error_model can't reload the wrong one.
+# Delete any old "_error_model.rds" made with the previous (broken) loess function.
+err_cache_file <- paste0(output_prefix, "_error_model_", error_model, ".rds")
+old_cache      <- paste0(output_prefix, "_error_model.rds")
+if (file.exists(old_cache))
+  cat("WARNING: old cache", old_cache, "exists and is no longer used; it may contain the broken loess model.\n")
 
 if (file.exists(err_cache_file)) {
   cat("Loading saved error model from:", err_cache_file, "\n")
@@ -184,30 +205,30 @@ if (file.exists(err_cache_file)) {
 
   if (error_model == "loess") {
     cat("Learning error rates using LOESS model...\n")
-    errF <- learnErrors(filtFs, multithread=TRUE, nbases=1e9,
-                        errorEstimationFunction=loessErrfun_mod)
-    errR <- learnErrors(filtRs, multithread=TRUE, nbases=1e9,
-                        errorEstimationFunction=loessErrfun_mod)
+    errF <- learnErrors(filtFs, multithread = TRUE, nbases = 1e9, randomize = TRUE,
+                        errorEstimationFunction = loessErrfun_mod)
+    errR <- learnErrors(filtRs, multithread = TRUE, nbases = 1e9, randomize = TRUE,
+                        errorEstimationFunction = loessErrfun_mod)
     cat("LOESS error model complete.\n\n")
 
   } else if (error_model == "default") {
     cat("Learning error rates using DADA2 default model...\n")
-    errF <- learnErrors(filtFs, multithread=TRUE, nbases=1e9)
-    errR <- learnErrors(filtRs, multithread=TRUE, nbases=1e9)
+    errF <- learnErrors(filtFs, multithread = TRUE, nbases = 1e9, randomize = TRUE)
+    errR <- learnErrors(filtRs, multithread = TRUE, nbases = 1e9, randomize = TRUE)
     cat("Default error model complete.\n\n")
 
   } else if (error_model == "compare") {
     cat("Learning error rates using both default and LOESS models (this will take longer)...\n")
 
     cat("  Running default model...\n")
-    errF_default <- learnErrors(filtFs, multithread=TRUE, nbases=1e9)
-    errR_default <- learnErrors(filtRs, multithread=TRUE, nbases=1e9)
+    errF_default <- learnErrors(filtFs, multithread = TRUE, nbases = 1e9, randomize = TRUE)
+    errR_default <- learnErrors(filtRs, multithread = TRUE, nbases = 1e9, randomize = TRUE)
 
     cat("  Running LOESS model...\n")
-    errF_loess <- learnErrors(filtFs, multithread=TRUE, nbases=1e9,
-                              errorEstimationFunction=loessErrfun_mod)
-    errR_loess <- learnErrors(filtRs, multithread=TRUE, nbases=1e9,
-                              errorEstimationFunction=loessErrfun_mod)
+    errF_loess <- learnErrors(filtFs, multithread = TRUE, nbases = 1e9, randomize = TRUE,
+                              errorEstimationFunction = loessErrfun_mod)
+    errR_loess <- learnErrors(filtRs, multithread = TRUE, nbases = 1e9, randomize = TRUE,
+                              errorEstimationFunction = loessErrfun_mod)
 
     fit_default_F <- error_fit_metric(errF_default)
     fit_loess_F   <- error_fit_metric(errF_loess)
@@ -231,8 +252,14 @@ if (file.exists(err_cache_file)) {
   }
 
   cat("Saving error model to:", err_cache_file, "\n")
-  saveRDS(list(errF=errF, errR=errR), err_cache_file)
+  saveRDS(list(errF = errF, errR = errR), err_cache_file)
 }
+
+# Error-model plots: the black line should follow the points and fall steadily
+pdf(paste0(output_prefix, "_error_model_", error_model, ".pdf"), width = 10, height = 8)
+print(plotErrors(errF, nominalQ = TRUE) + ggplot2::ggtitle("Forward"))
+print(plotErrors(errR, nominalQ = TRUE) + ggplot2::ggtitle("Reverse"))
+dev.off()
 
 # ----------------------
 # 6. Dereplicate and DADA2 denoise
